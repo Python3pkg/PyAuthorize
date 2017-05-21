@@ -28,9 +28,9 @@
 __author__ = 'jordan.bouvier@analytemedia.com (Jordan Bouvier)'
 
 
-from urllib import urlencode
+from urllib.parse import urlencode
 import re
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 try:
     from google.appengine.api import urlfetch
@@ -187,9 +187,9 @@ class PaymentProcessor(object):
     def _transaction(self):
         """Validate the transaction id and return it if successful."""
         if not self.transaction:
-            raise ValueError, 'transaction is required.'
+            raise ValueError('transaction is required.')
         elif not re.search('^\d+$', self.transaction):
-            raise ValueError, ('Invalid transaction format. %s'
+            raise ValueError('Invalid transaction format. %s'
                                % self.transaction)
         else:
             return self.transaction
@@ -197,27 +197,27 @@ class PaymentProcessor(object):
     def _address(self):
         """Validate the address and return it if successful."""
         if not self.address:
-            raise ValueError, 'address is required.'
+            raise ValueError('address is required.')
         elif not re.search("^[\w\d'/&#,.\- ]{1,60}$", self.address):
-            raise ValueError, 'Invalid address format. %s' % self.address
+            raise ValueError('Invalid address format. %s' % self.address)
         else:
             return self.address
 
     def _zip(self):
         """Validate the zip code and return it if successful."""
         if not self.zip:
-            raise ValueError, 'zip is required.'
+            raise ValueError('zip is required.')
         elif not re.search('^\d{5}$|^\d{9}$', str(self.zip)):
-            raise ValueError, 'Invalid zip format. %s' % str(self.zip)
+            raise ValueError('Invalid zip format. %s' % str(self.zip))
         else:
             return str(self.zip)
 
     def _card_num_last_four(self):
         """Validate the credit card last four and return it if successful."""
         if not self.card_num:
-            raise ValueError, 'card_num is required.'
+            raise ValueError('card_num is required.')
         elif not re.search('^\d{4}$|^\d{13,16}$', str(self.card_num)):
-            raise ValueError, ('Invalid card_num_last_four format. %s'
+            raise ValueError('Invalid card_num_last_four format. %s'
                                % str(self.card_num))
         else:
             return str(self.card_num)
@@ -225,16 +225,16 @@ class PaymentProcessor(object):
     def _card_num(self):
         """Validate the credit card number and return it if successful."""
         if not self.card_num:
-            raise ValueError, 'card_num is required'
+            raise ValueError('card_num is required')
         elif not re.search('^\d{13,16}$', str(self.card_num)):
-            raise ValueError, 'Invalid card_num format. %s' % self.card_num
+            raise ValueError('Invalid card_num format. %s' % self.card_num)
         else:
             return str(self.card_num)
 
     def _card_num_or_last_four(self):
         """Is this the full card_num or just the last four?"""
         if not self.card_num:
-            raise ValueError, 'card_num is required'
+            raise ValueError('card_num is required')
         elif len(self.card_num) == 4:
             card_num = self._card_num_last_four()
         else:
@@ -245,9 +245,9 @@ class PaymentProcessor(object):
     def _card_code(self):
         """Validate the card code and return it if successful."""
         if not self.card_code:
-            raise ValueError, 'card_code is required.'
+            raise ValueError('card_code is required.')
         elif not re.search('^\d{3,4}$', str(self.card_code)):
-            raise ValueError, 'Invalid card_code format. %s' % self.card_code
+            raise ValueError('Invalid card_code format. %s' % self.card_code)
         else:
             return str(self.card_code)
 
@@ -256,9 +256,9 @@ class PaymentProcessor(object):
         expiration_string = ('^[0-1]{1}[0-9]{1}[-/]{0,1}[0-9]{2}$'
                              '|^[0-1]{1}[0-o{1}][-/]{0,1}20[0-9]{2}$')
         if not self.exp_date:
-            raise ValueError, 'exp_date is required.'
+            raise ValueError('exp_date is required.')
         elif not re.search(expiration_string, str(self.exp_date)):
-            raise ValueError, 'Invalid exp_date format. %s' % self.exp_date
+            raise ValueError('Invalid exp_date format. %s' % self.exp_date)
         else:
             return self.exp_date
 
@@ -266,7 +266,7 @@ class PaymentProcessor(object):
         """Validate the amount and return it if successful."""
 
         if not self.amount:
-            raise ValueError, 'amount is required'
+            raise ValueError('amount is required')
         else:
             # Authorize.net will take anything that can be float-ed
             float(self.amount)
